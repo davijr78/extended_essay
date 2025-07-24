@@ -94,7 +94,7 @@ def rhs_4thOrder(n, maxVal, A):
                 A[idx, idx] = 1
                 b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2)/(12 * h ** 2))
             if i == 0 and j == 1:
-                A[idx, idx] = 1
+                A[idx, idx] =
                 b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2)/(12 * h ** 2))
             if i == n-1 and j == n-1:
                 A[idx, idx] = 1
