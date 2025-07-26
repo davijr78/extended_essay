@@ -70,8 +70,12 @@ def rhs_2ndOrder(n, maxVal, A):
             y = i * h
             # Boundaries
             if i == 0 or i == n - 1 or j == 0 or j == n - 1:
-                A[idx, idx] = 1
-                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y) + (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))/(h ** 2)
+                A[idx,idx] = 1
+                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
+            if i == 0 and j == 0:
+                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y) + (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))/h**2
+            if i == n-1 and j == n-1:
+                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)  + (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))/h**2
 
     return b
 
@@ -90,6 +94,9 @@ def rhs_4thOrder(n, maxVal, A):
             idx = i * n + j
             x_val = j * h
             y_val = i * h
+            if i == 0 or i == n-1 or j == 0 or j == n-1:
+                A[idx, idx] = 1
+                b[i,j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
             if i == 0 and j == 0:
                 A[idx, idx] = 1
                 b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (-16*(np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val))/(12 * h ** 2)) + (np.sin(2 * np.pi * x_val-h) + np.sin(2 * np.pi * y_val-h)/(12 * h ** 2))
@@ -188,7 +195,7 @@ if __name__ == '__main__':
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_zlabel('u(x, y)')
-        ax.set_title('Numeric Solution Plot')
+        ax.set_title('4th Order Numeric Solution Plot')
         fig.colorbar(surf, shrink=0.5, aspect=10)
         plt.savefig(f"4th_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
         plt.close()
@@ -201,7 +208,7 @@ if __name__ == '__main__':
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_zlabel('u(x, y)')
-        ax.set_title('Numeric Solution Plot')
+        ax.set_title('2nd Order Numeric Solution Plot')
         fig.colorbar(surf, shrink=0.5, aspect=10)
         plt.savefig(f"2nd_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
         plt.close()
