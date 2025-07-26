@@ -7,6 +7,7 @@ matplotlib.use('Agg')
 
 
 def linear_system_2d_2nd_order(n, maxVal):
+    h = maxVal/(n-1)
     size = n*n
     A = np.zeros((size, size))
     for i in range(n):
@@ -21,7 +22,7 @@ def linear_system_2d_2nd_order(n, maxVal):
                 A[idx, idx - 1] = 1  # left
             if j < n - 1:
                 A[idx, idx + 1] = 1  # right
-    return A / (maxVal / (n-1))**2
+    return A / h**2
 
 
 def linear_system_2d_4th_order(n, maxVal):
@@ -62,13 +63,15 @@ def rhs_2ndOrder(n, maxVal, A):
             y = i * h
             b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
 
+    for i in range(n):
+        for j in range(n):
             idx = i * n + j
-            x_val = j * h
-            y_val = i * h
+            x = j * h
+            y = i * h
+            # Boundaries
             if i == 0 or i == n - 1 or j == 0 or j == n - 1:
-                A[idx, : ] = 0
                 A[idx, idx] = 1
-                b[i, j] = -4 * (np.pi ** 2) * np.sin(2 * np.pi * x) + (np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2))
+                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y) + (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))/(h ** 2)
 
     return b
 
@@ -92,10 +95,10 @@ def rhs_4thOrder(n, maxVal, A):
                 b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (-16*(np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val))/(12 * h ** 2)) + (np.sin(2 * np.pi * x_val-h) + np.sin(2 * np.pi * y_val-h)/(12 * h ** 2))
             if i == 1 and j == 0:
                 A[idx, idx] = 1
-                b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2)/(12 * h ** 2))
+                b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2))
             if i == 0 and j == 1:
-                A[idx, idx] =
-                b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2)/(12 * h ** 2))
+                A[idx, idx] = 1
+                b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val)/(12 * h ** 2))
             if i == n-1 and j == n-1:
                 A[idx, idx] = 1
                 b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) + (-16*(np.sin(2 * np.pi * x_val) + np.sin(2 * np.pi * y_val))/(12 * h ** 2)) + (np.sin(2 * np.pi * x_val+h) + np.sin(2 * np.pi * y_val+h)/(12 * h ** 2))
@@ -124,7 +127,6 @@ if __name__ == '__main__':
     Z = analytic_solution(X,Y)
 
     # Enforce boundary conditions on A and b
-    f = lambda x,y: np.sin(2*np.pi*x)+np.sin(2*np.pi*y)
 
     solution = np.linalg.solve(A, b.flatten())
 
@@ -158,7 +160,7 @@ if __name__ == '__main__':
     plt.close()
 
     # Log-log error vs grid spacing plot for several resolutions
-    resolutions = [10, 20, 40, 60, 80, 100]
+    resolutions = [10, 20, 40, 60]
     errors_2ndOrder = []
     errors_4ndOrder = []
     hs = []
