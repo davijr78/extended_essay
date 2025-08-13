@@ -1,4 +1,3 @@
-import time
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -70,9 +69,7 @@ def rhs_2ndOrder(n, maxVal, A):
             y = i * h
             # Boundaries
             if i == 0 or i == n - 1 or j == 0 or j == n - 1:
-                A[idx, :] = 0
-                A[idx,idx] = 1
-                b[i, j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
+                b[i, j] = -4 * (np.pi**2) * (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) / h**2
     return b
 
 def rhs_4thOrder(n, maxVal, A):
@@ -95,19 +92,19 @@ def rhs_4thOrder(n, maxVal, A):
                 b[i, j] = (-16*(np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) + (np.sin(2 * np.pi * x-h) + np.sin(2 * np.pi * y-h))
             if i == 1 and j == 0:
                 A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y-h))
+                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
             if i == 0 and j == 1:
                 A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x-h) + np.sin(2 * np.pi * y))
+                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
             if i == n-1 and j == n-1:
                 A[idx,idx] = 1
                 b[i, j] = (-16*(np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) + (np.sin(2 * np.pi * x+h) + np.sin(2 * np.pi * y+h))
             if i == n-2 and j == n-1:
                 A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y+h))
+                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
             if i == n-1 and j == n-2:
                 A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x+h) + np.sin(2 * np.pi * y))
+                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
     return b
 
 def iterations(resolutions, max_val):
