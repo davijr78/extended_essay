@@ -1,9 +1,11 @@
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from matplotlib import cm  # Color map
 matplotlib.use('Agg')
 
+os.makedirs("plots", exist_ok=True)
 
 def linear_system_2d_2nd_order(n, maxVal):
     h = maxVal/(n-1)
@@ -154,7 +156,7 @@ def iterations(resolutions, max_val):
         ax.set_zlabel('u(x, y)')
         ax.set_title('4th Order Numeric Solution Plot')
         fig.colorbar(surf, shrink=0.5, aspect=10)
-        plt.savefig(f"4th_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"plots/4th_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
         plt.close()
 
         U_2nd = sol_2ndOrder.reshape((res, res))
@@ -167,7 +169,7 @@ def iterations(resolutions, max_val):
         ax.set_zlabel('u(x, y)')
         ax.set_title('2nd Order Numeric Solution Plot')
         fig.colorbar(surf, shrink=0.5, aspect=10)
-        plt.savefig(f"2nd_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"plots/2nd_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
         plt.close()
 
         # Computing errors
@@ -213,7 +215,7 @@ if __name__ == '__main__':
     ax.set_zlabel('f(x, y)')
     ax.set_title('Analytical Solution Surface Plot')
     fig.colorbar(surf, shrink=0.5, aspect=10)
-    plt.savefig(f"analytical_surface_plot.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"plots/analytical_surface_plot.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # Plot 3D surface
@@ -226,7 +228,7 @@ if __name__ == '__main__':
     ax.set_zlabel('u(x, y)')
     ax.set_title('Numeric Solution Plot')
     fig.colorbar(surf, shrink=0.5, aspect=10)
-    plt.savefig(f"solution_plot-{points}.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"plots/solution_plot-{points}.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # Running throu function iterations 
@@ -248,6 +250,6 @@ plt.ylabel('L2 Error')
 plt.title('Error vs Grid Spacing (Log-Log Plot)')
 plt.grid(True, which="both", ls="--")
 plt.legend()
-plt.savefig("error_convergence_plot.png", dpi=300, bbox_inches='tight')
+plt.savefig("plots/error_convergence_plot.png", dpi=300, bbox_inches='tight')
 plt.close()
 
