@@ -118,6 +118,18 @@ def rhs_4thOrder(n, maxVal, A):
 
     return b
 
+def plot_solution(U, X, Y, title):
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(X, Y, U, cmap=cm.viridis)
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('u(x, y)')
+    ax.set_title(title)
+    fig.colorbar(surf, shrink=0.5, aspect=10)
+    plt.savefig(f"plots/{title}.png", dpi=300, bbox_inches='tight')
+    plt.close()
+
 def iterations(resolutions, max_val):
 
     errors_2ndOrder = []
@@ -151,26 +163,14 @@ def iterations(resolutions, max_val):
         ax = fig.add_subplot(111, projection='3d')
         surf = ax.plot_surface(X, Y, U_4th, cmap=cm.viridis)
 
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.set_zlabel('u(x, y)')
-        ax.set_title('4th Order Numeric Solution Plot')
-        fig.colorbar(surf, shrink=0.5, aspect=10)
-        plt.savefig(f"plots/4th_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
-        plt.close()
+        plot_solution(U_4th, X, Y, f"4th Order Numeric Solution Plot-{res}")
 
         U_2nd = sol_2ndOrder.reshape((res, res))
         fig = plt.figure(figsize=(10, 7))
         ax = fig.add_subplot(111, projection='3d')
         surf = ax.plot_surface(X, Y, U_2nd, cmap=cm.viridis)
 
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.set_zlabel('u(x, y)')
-        ax.set_title('2nd Order Numeric Solution Plot')
-        fig.colorbar(surf, shrink=0.5, aspect=10)
-        plt.savefig(f"plots/2nd_order_solution_plot-{res}.png", dpi=300, bbox_inches='tight')
-        plt.close()
+        plot_solution(U_2nd, X, Y, f"2nd Order Numeric Solution Plot-{res}")
 
         # Computing errors
         err_2ndOrder = compute_error(sol_2ndOrder, np.array(anlytc_solution(X,Y)).flatten())
@@ -199,39 +199,15 @@ if __name__ == '__main__':
     analytic_solution = lambda x, y: np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
     Z = analytic_solution(X,Y)
 
-
+    # Solving the system
     solution = np.linalg.solve(A, b.flatten())
-
-    # Reshape the solution vector to a 2D grid (n x n)
     U = solution.reshape((points, points))
 
-    # Plot 3D surface of the analytical solution
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.viridis)
+    # plotting solutions
+    plot_solution(Z, X, Y, "Analytical Solution Surface Plot")
+    plot_solution(U, X, Y, f"Numeric Solution Plot-{points}")
 
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('f(x, y)')
-    ax.set_title('Analytical Solution Surface Plot')
-    fig.colorbar(surf, shrink=0.5, aspect=10)
-    plt.savefig(f"plots/analytical_surface_plot.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
-    # Plot 3D surface
-    fig = plt.figure(figsize=(10, 7))
-    ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(X, Y, U, cmap=cm.viridis)
-
-    ax.set_xlabel('x')
-    ax.set_ylabel('y') 
-    ax.set_zlabel('u(x, y)')
-    ax.set_title('Numeric Solution Plot')
-    fig.colorbar(surf, shrink=0.5, aspect=10)
-    plt.savefig(f"plots/solution_plot-{points}.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
-    # Running throu function iterations 
+    # Running through iterations to check convergence
     res = [10, 20, 40, 60]
     hs, errs2, errs4, sol2nd, sol4th = iterations(res, max_val=max_val)
 
@@ -240,16 +216,15 @@ if __name__ == '__main__':
         print(f"4th order error for resolution: {res[i]}\n{errs4[i]}")
         print("")
 
-
-# After the loop ends, generate the log-log plot
-plt.figure(figsize=(8, 6))
-plt.loglog(hs, errs2, 'o-', label='2nd Order Error')
-plt.loglog(hs, errs4, 's-', label='4th Order Error')
-plt.xlabel('Grid Spacing (h)')
-plt.ylabel('L2 Error')
-plt.title('Error vs Grid Spacing (Log-Log Plot)')
-plt.grid(True, which="both", ls="--")
-plt.legend()
-plt.savefig("plots/error_convergence_plot.png", dpi=300, bbox_inches='tight')
-plt.close()
+    # Plotting error convergence
+    plt.figure(figsize=(8, 6))
+    plt.loglog(hs, errs2, 'o-', label='2nd Order Error')
+    plt.loglog(hs, errs4, 's-', label='4th Order Error')
+    plt.xlabel('Grid Spacing (h)')
+    plt.ylabel('L2 Error')
+    plt.title('Error vs Grid Spacing (Log-Log Plot)')
+    plt.grid(True, which="both", ls="--")
+    plt.legend()
+    plt.savefig("plots/error_convergence_plot.png", dpi=300, bbox_inches='tight')
+    plt.close()
 
