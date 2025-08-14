@@ -83,28 +83,37 @@ def rhs_4thOrder(n, maxVal, A):
 
             # Enforcing Boundaries
             idx = i * n + j
-            if i == 0 or i == n-1 or j == 0 or j == n-1:
-                A[idx, :] = 0
-                A[idx,idx] = 1
-                b[i,j] = np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
+
+            # corner boundaries
             if i == 0 and j == 0:
-                A[idx,idx] = 1
-                b[i, j] = (-16*(np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) + (np.sin(2 * np.pi * x-h) + np.sin(2 * np.pi * y-h))
-            if i == 1 and j == 0:
-                A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
-            if i == 0 and j == 1:
-                A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
+               b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x-h) + np.sin(2 * np.pi * y-h))) / (12*h**2)
+            if i == 0 and j == n-1:
+               b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x-h) + np.sin(2 * np.pi * y+h))) / (12*h**2)
+            if i == n-1 and j == 0:
+               b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x+h) + np.sin(2 * np.pi * y-h))) / (12*h**2)
             if i == n-1 and j == n-1:
-                A[idx,idx] = 1
-                b[i, j] = (-16*(np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) + (np.sin(2 * np.pi * x+h) + np.sin(2 * np.pi * y+h))
-            if i == n-2 and j == n-1:
-                A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
-            if i == n-1 and j == n-2:
-                A[idx,idx] = 1
-                b[i, j] = (np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))
+               b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x+h) + np.sin(2 * np.pi * y+h))) / (12*h**2)
+            
+            # 1st edge boundaries
+            if i == 0 and j > 0 and j < n-1:
+                b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x-h))) / (12*h**2)
+            if i == n-1 and j > 0 and j < n-1:
+                b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * x+h))) / (12*h**2)
+            if j == 0 and i > 0 and i < n-1:
+                b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * y-h))) / (12*h**2)
+            if j == n-1 and i > 0 and i < n-1:
+                b[i,j] += ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)) - 16*(np.sin(2 * np.pi * y+h))) / (12*h**2)
+
+            # 2nd edge boundaries
+            if i == 1 and j > 0 and j < n-1:
+                b[i,j] -= ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) / (12*h**2)
+            if i == n-2 and j > 0 and j < n-1:
+                b[i,j] -= ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) / (12*h**2)
+            if j == 1 and i > 0 and i < n-1:
+                b[i,j] -= ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) / (12*h**2)
+            if j == n-2 and i > 0 and i < n-1:
+                b[i,j] -= ((np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y))) / (12*h**2)
+
     return b
 
 def iterations(resolutions, max_val):
