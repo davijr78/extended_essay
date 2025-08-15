@@ -182,32 +182,91 @@ def iterations(resolutions, max_val):
 def compute_error(U_numeric, U_exact):
     return np.sqrt(np.mean((U_numeric - U_exact)**2))
 
+def perfect_solution(n, max_val, plot=True):
+    analytic_solution = lambda x, y: np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
+    if plot:
+        x = np.linspace(0,max_val,points)
+        y = np.linspace(0,max_val,points)
+        X,Y = np.meshgrid(x,y)
+        Z = analytic_solution(X,Y)
+        plot_solution(Z, X, Y, "Analytical Solution Surface Plot")
+        return X,Y,Z
+    else:
+        x = np.linspace(0,max_val,points)
+        y = np.linspace(0,max_val,points)
+        X,Y = np.meshgrid(x,y)
+        analytic_solution = lambda x, y: np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
+        Z = analytic_solution(X,Y)
+        return X,Y,Z
+
+def simple_solution(n, max_val, order=4, plot=True):
+    if order == 2:
+        if plot:
+            A = linear_system_2d_2nd_order(n, max_val)
+            b = rhs_2ndOrder(n, max_val, A)
+
+            x = np.linspace(0,max_val,n)
+            y = np.linspace(0,max_val,n)
+            X,Y = np.meshgrid(x,y)
+            solution = np.linalg.solve(A, b.flatten())
+            U = solution.reshape((n, n))
+            
+            plot_solution(U, X, Y, f"Numeric Solution Plot-{points}")
+
+            return A,b,U
+
+        else:
+            A = linear_system_2d_4th_order(n, max_val)
+            b = rhs_4thOrder(n, max_val, A)
+
+            x = np.linspace(0,max_val,n)
+            y = np.linspace(0,max_val,n)
+            X,Y = np.meshgrid(x,y)
+            solution = np.linalg.solve(A, b.flatten())
+            U = solution.reshape((n, n))
+          
+            return U,X,Y
+
+    if order == 4:
+        if plot:
+            A = linear_system_2d_4th_order(n, max_val)
+            b = rhs_4thOrder(n, max_val, A)
+
+            x = np.linspace(0,max_val,n)
+            y = np.linspace(0,max_val,n)
+            X,Y = np.meshgrid(x,y)
+            solution = np.linalg.solve(A, b.flatten())
+            U = solution.reshape((n, n))
+
+            plot_solution(U, X, Y, f"Analytic Solution Plot 4th-{points}")
+
+            return U,X,Y
+        
+        else:
+            A = linear_system_2d_4th_order(n, max_val)
+            b = rhs_4thOrder(n, max_val, A)
+
+            x = np.linspace(0,max_val,n)
+            y = np.linspace(0,max_val,n)
+            X,Y = np.meshgrid(x,y)
+            solution = np.linalg.solve(A, b.flatten())
+            U = solution.reshape((n, n))
+
+            return U,X,Y
+
+    else:
+        print("order not yet programed")
 
 
 if __name__ == '__main__':
     points = 10
     max_val = 1
-    A = linear_system_2d_4th_order(points, max_val)
-    b = rhs_4thOrder(points, max_val, A)
-
-    x = np.linspace(0,max_val,points)
-    y = np.linspace(0,max_val,points)
-    X,Y = np.meshgrid(x,y)
-    analytic_solution = lambda x, y: np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
-    Z = analytic_solution(X,Y)
-
-    # Solving the system
-    solution = np.linalg.solve(A, b.flatten())
-    U = solution.reshape((points, points))
-
-    # plotting solutions
-    plot_solution(Z, X, Y, "Analytical Solution Surface Plot")
-    plot_solution(U, X, Y, f"Numeric Solution Plot-{points}")
+    perfect_solution(points, max_val)
+    simple_solution(points, max_val, order=4)
 
     # Running through iterations to check convergence
     res = [10, 20, 40, 60]
     hs, errs2, errs4, sol2nd, sol4th = iterations(res, max_val=max_val)
-
     for i in range(len(res)):
         print(f"2nd order error for resolution: {res[i]}\n{errs2[i]}")
         print(f"4th order error for resolution: {res[i]}\n{errs4[i]}")
