@@ -4,6 +4,7 @@ analytical_surface_plot.png
 error_convergence_plot.png
 solution*
 
+__pycache__
 .venv/
 .idea
 .DS_Store
