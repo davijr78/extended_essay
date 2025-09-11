@@ -164,7 +164,7 @@ def perfect_solution(n, max_val, plot=False):
     analytic_solution = lambda x, y: np.sin(2 * np.pi * x) + np.sin(2 * np.pi * y)
     if plot:
         x = np.linspace(0,max_val,n)
-        y = np.linspace(0,max_val,points)
+        y = np.linspace(0,max_val,n)
         X,Y = np.meshgrid(x,y)
         U = analytic_solution(X,Y)
         plot_solution(U, X, Y, "Analytical Solution Surface Plot")
