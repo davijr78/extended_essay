@@ -1,3 +1,4 @@
+from nt import write
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -226,7 +227,8 @@ if __name__ == "__main__":
     max_val = 1
     resolutions = [10, 20, 40, 60, 80]
     hs, errs2, errs4 = error_analysis(resolutions, max_val, plot=True)
-    covergence_analysis(resolutions, hs, errs2, errs4)
+    covergence_analysis(resolutions, hs, errs2, errs4, writeOut=True, plot=True)
+    
     
 
 
