@@ -230,5 +230,5 @@ def covergence_analysis(res, hs, errs2, errs4, writeOut=True, plot=True):
 if __name__ == "__main__":
     max_val = 1.0
     resolutions = [10, 20, 50, 100, 200]
-    hs, errs2, errs4 = error_analysis(resolutions, max_val, plot=False)
+    hs, errs2, errs4 = error_analysis(resolutions, max_val, plot=True)
     rates2, rates4 = covergence_analysis(resolutions, hs, errs2, errs4, writeOut=True, plot=True)
